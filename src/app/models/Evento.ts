@@ -1,5 +1,5 @@
 export class Evento {
-  id!: number;
+  eventoId!: number;
   local!: string;
   dataEvento!: string;
   tema!: string;
