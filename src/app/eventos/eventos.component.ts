@@ -8,15 +8,25 @@ import { Evento } from '../models/Evento';
   styleUrls: ['./eventos.component.scss']
 })
 export class EventosComponent implements OnInit {
+  @Output() resultRespost = new EventEmitter();
+
   public eventos: any = [];
+  public eventosFiltrados: any = [];
   public isImgOpened!: boolean;
   public valueInputText!: string;
   public valueInputTextEnglish!: string;
   public isValueInputText!: boolean;
-  filtroLista: string = '';
+  private _filtroLista: string = '';
 
+  public get filtroLista(): string{
+    return this._filtroLista;
+  }
 
-  @Output() resultRespost = new EventEmitter();
+  public set filtroLista(value:string){
+    console.log(value)
+    this._filtroLista = value;
+    this.eventosFiltrados = this.filtroLista ? this.filtrarEventos(this.filtroLista) : this.eventos;
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +42,7 @@ export class EventosComponent implements OnInit {
       {
       next: (response: any) => {
         this.eventos = response
+        this.eventosFiltrados = this.eventos
       }, error: (err: any) => {
         console.log(err)
       }
@@ -61,6 +72,16 @@ export class EventosComponent implements OnInit {
     }
 
   }
+
+
+  filtrarEventos(filtrarPor: string): any {
+    filtrarPor = filtrarPor.toLocaleLowerCase();
+    return this.eventos.filter(
+      (evento:any) => evento.tema.toLowerCase().indexOf(filtrarPor) !== -1 ||
+      evento.local.toLowerCase().indexOf(filtrarPor) !== -1
+    );
+  }
+
 
 
 
